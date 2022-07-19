@@ -1,0 +1,10 @@
+.home-top{
+    display: flex;
+    flex-direction: row;
+    .left-side{
+        width: 15%;
+    }
+    .right-side{
+        width: 85%;
+    }
+}
