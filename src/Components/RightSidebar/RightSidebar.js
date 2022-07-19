@@ -5,30 +5,32 @@ import person from '../../images/Screenshot 2022-07-01 at 1.46 (1).png';
 import './RightSidebar.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
-import useData from '../../Hooks/useData';
 
 
 const RightSidebar = () => {
-    const [searchResult, setSearchResult] = useState([])
-    const [tacker, setTacker] = useState('')
-    const [data] = useData();
-    const companyName = data.map(dat => dat.company)
+    const [searchResult, setSearchResult] = useState([]);
+    const [tacker, setTacker] = useState('');
+
     const searchHandle = (e) => {
-        const search = companyName.filter(element => element.toLowerCase().includes(e.target.value.toLowerCase()));
-        // console.log(search);
-        setSearchResult(search);
+        const searchValue = e.target.value.toLowerCase();
+        fetch(`https://tva.staging.b2brain.com/search/autocomplete_org_all/?q=${searchValue}`, {
+            method: 'GET'
+        })
+            .then(res => res.json())
+            .then(data => setSearchResult(data))
     };
+
     const searchReset = () => {
         setSearchResult([]);
-        console.log('sjf')
         const inputField = document.getElementById("search-id");
         inputField.value = "";
     };
-    const searchMaching = data.filter(element => searchResult.includes(element.company));
+
     const tackingHandle = (e) => {
         setTacker(e)
-        console.log(e)
+        console.log(e.company, ',', e.slug, 'is Tracked')
     };
+    
     return (
         <div>
             <div className='top-bar'>
@@ -44,11 +46,11 @@ const RightSidebar = () => {
                 <FontAwesomeIcon className='faIcon' icon={faBell} />
             </div>
             {
-                searchMaching.length > 0 ?
+                searchResult.length > 0 ?
                     <div className='grid'>
                         {
-                            searchMaching.map(value =>
-                                <div key={value?.company} value={value}>
+                            searchResult.map(value =>
+                                <div key={value?.slug} value={value}>
                                     <div className='single-data'>
                                         {
                                             value.logo ?
